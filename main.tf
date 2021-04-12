@@ -37,6 +37,6 @@ resource "random_pet" "this" {
 ## google_service_account doc: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account
 resource "google_service_account" "default" {
   account_id = "${random_pet.this.id}-sa-1"
-  display_name = random_pet.this.id
+  display_name = "${random_pet.this.id} pet"
   project = data.google_project.this.project_id
 }
