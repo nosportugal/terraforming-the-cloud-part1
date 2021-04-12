@@ -2,11 +2,11 @@
 
 Temas abordados neste modulo:
 
-* Os 4 principais comandos de terraform: `init`, `plan`, `apply` e `destroy`
-* Utilização de `variable`, `data`, `resource` e `output`
-* `terrafom.tfvars` é usado por defeito se tiver presente na mesma diretória
+* Os 4 principais comandos de terraform: `init`, `plan`, `apply` e `destroy`.
+* Utilização de `variable`, `data`, `resource` e `output`.
+* `terrafom.tfvars` é usado por defeito se tiver presente na mesma diretória.
 * Gestão de alterações: **simples**, **disruptivas** e **dependentes**.
-* Destruição seletiva de recursos
+* Destruição seletiva de recursos.
 
 ## o primeiro contacto
 
