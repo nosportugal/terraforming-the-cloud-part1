@@ -10,19 +10,17 @@ Temas abordados neste modulo:
 
 ## preparar o ambiente
 
-**clonar o projecto git que vamos usar**
-
-```bash
-git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
-```
-
 **autenticar a consola com o GCP**
-
 - Abrir o endereço <https://console.cloud.google.com>
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
 ``` 
+
+**clonar o projecto git que vamos usar**
+```bash
+git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
+```
 
 **obter a última versão do terraform**
 ```bash
