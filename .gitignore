@@ -13,6 +13,7 @@
 *.tfplan
 plan
 kubeconfig.yaml
+.terraform.lock.hcl
 
 # Crash log files
 crash.log
