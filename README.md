@@ -165,7 +165,7 @@ Com esse valor, vamos criar então a `service_account`:
 
 ```bash
 # criar a service_account
-gcloud iam service-accounts --project=tf-gke-lab-01-np-000001 create $(terraform output imported_service_account_id)
+gcloud iam service-accounts --project=tf-gke-lab-01-np-000001 create $(terraform output -raw imported_service_account_id)
 ```
 
 Agora que temos um recurso "rogue", podemos então importa-lo.
@@ -181,7 +181,11 @@ resource "google_service_account" "imported" {
 Neste momento, se executarmos o `plan` o terraform vai tentar criar o recurso, pois não sabe que existe um igual já criado. Se por ventura avançarmos com a criação, esta vai falhar devido a um conflito.
 
 ```bash
+# plan
 terraform plan -out plan.tfplan
+
+# apply (deverá dar erro pois o recurso ja existe)
+terraform apply plan.tfplan
 ```
 
 Por esse motivo, é que o temos que importar para o estado primeiro.
@@ -189,7 +193,7 @@ Por esse motivo, é que o temos que importar para o estado primeiro.
 Agora podemos proceder à importação do recurso:
 
 ```bash
-terraform import google_service_account.imported "$(terraform output imported_service_account_id_path)"
+terraform import google_service_account.imported "$(terraform output -raw imported_service_account_id_path)"
 ```
 
 Se tudo correr bem, o recurso foi importado com sucesso, e passou agora a ser gerido pelo state do terraform. 
