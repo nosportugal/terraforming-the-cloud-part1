@@ -1,4 +1,4 @@
-# 00 - terraform-basic
+# terraforming the cloud - part 1
 
 Temas abordados neste modulo:
 
@@ -8,7 +8,25 @@ Temas abordados neste modulo:
 * Gestão de alterações: **simples**, **disruptivas** e **dependentes**.
 * Destruição seletiva de recursos.
 
-## o primeiro contacto
+## preparar o ambiente
+
+**clonar o projecto git que vamos usar**
+
+```bash
+git clone https://git.nosinovacao.pt/ccoe/labs/terraform-gcp-basics-01.git && cd terraform-gcp-basics-01
+```
+
+**autenticar a consola com o GCP**
+```bash
+gcloud config set project tf-gke-lab-01-np-000001
+``` 
+
+**obter a última versão do terraform**
+```bash
+sudo scripts/install-terraform.sh
+```
+
+## 1. o primeiro contacto
 
 ```bash
 # init
@@ -30,7 +48,7 @@ terraform destroy
 gcloud iam service-accounts list --project=tf-gke-lab-01-np-000001
 ```
 
-## lidar com as alterações
+## 2. lidar com as alterações
 
 Assegurar que os recursos foram devidamente destruidos: `terraform destroy`
 
@@ -72,7 +90,7 @@ terraform apply plan.tfplan
 
 No final, destruir os recursos criados: `terraform destroy`
 
-## destruir seletivamente
+## 3. destruir seletivamente
 
 Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`
 
@@ -94,7 +112,7 @@ terraform destroy -target="google_service_account.default"
 
 No final, destruir os recursos criados: `terraform destroy`
 
-## importar recursos já existentes
+## 4. importar recursos já existentes
 
 
 Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`
