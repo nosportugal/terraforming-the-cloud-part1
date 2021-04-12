@@ -11,7 +11,7 @@ Temas abordados neste modulo:
 ## preparar o ambiente
 
 **autenticar a consola com o GCP**
-- Abrir o endereço <https://console.cloud.google.com>
+- Abrir o endereço <https://console.cloud.google.com> e autenticar
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
