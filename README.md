@@ -13,10 +13,13 @@ Temas abordados neste modulo:
 **clonar o projecto git que vamos usar**
 
 ```bash
-git clone https://git.nosinovacao.pt/ccoe/labs/terraform-gcp-basics-01.git && cd terraform-gcp-basics-01
+git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
 ```
 
 **autenticar a consola com o GCP**
+
+- Abrir o endereço <https://console.cloud.google.com>
+
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
 ``` 
