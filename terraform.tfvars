@@ -1,2 +1,2 @@
-project_id = "terraform-lab-np-01"
+project_id = "tf-gke-lab-01-np-000001"
 prefix = "nos"
