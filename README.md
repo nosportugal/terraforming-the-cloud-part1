@@ -83,7 +83,7 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
 ```bash
 # para entrar via SSH
-gcloud compute ssh $(terraform output -raw vm_name) --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
 ```
 
 ### 2.2 Introduzindo alterações disruptivas
@@ -101,7 +101,7 @@ terraform apply plan.tfplan
 Verificar que o SSH continua a ser possível, mesmo com a nova instância:
 ```bash
 # para entrar via SSH
-gcloud compute ssh $(terraform output -raw vm_name) --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
 ```
 
 ### 2.3 Introduzindo alterações dependentes
@@ -139,7 +139,7 @@ terraform apply plan.tfplan
 ```bash
 gcloud compute networks create $(terraform output -raw my_identifier) --project=tf-gke-lab-01-np-000001 --subnet-mode=custom
 
-gcloud compute networks subnets create default-subnet --project=tf-gke-lab-01-np-000001 --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier) --region=europe-west1
+gcloud compute networks subnets create default-subnet --project=tf-gke-lab-01-np-000001 --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier) --region=$(terraform output -raw region) 
 ```
 
 ### 3.2 Criar os recursos manualmente
