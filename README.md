@@ -41,38 +41,20 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 
 ## verificar que o recurso remoto foi criado
-gcloud iam service-accounts list --project=tf-gke-lab-01-np-000001
+gcloud compute instances list --project tf-gke-lab-01-np-000001
 
 # destroy
 terraform destroy
 
 ## verificar que o recurso remoto foi destruido
-gcloud iam service-accounts list --project=tf-gke-lab-01-np-000001
+gcloud compute instances list --project tf-gke-lab-01-np-000001
 ```
 
 ## 2. lidar com as alterações
 
-<!-- 
+> *Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`.`*
 
-Nesta parte queremos mudar o seguinte
-- Alterações não disruptivas: adição da tag para permitir ssh "allow-iap"
-- Alterações disruptivas: mudança do id da vm
-
-
-
-# listar as VMs
-gcloud compute instances list --project tf-gke-lab-01-np-000001
-
-# adici
-
--->
-
-
-
-Assegurar que os recursos foram devidamente destruidos: `terraform destroy`
-
-Recriar os recursos:
-
+**Assegurar a recriação dos recursos (`plan` e `apply`):**
 ```bash
 # plan
 terraform plan -out plan.tfplan
@@ -81,21 +63,52 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-**Introduzindo alterações:**
+**Tentar entrar para a máquina via SSH**
+```bash
+# podem obter o comando a partir do output do terraform, ou executar o seguinte
+gcloud compute ssh <vm_id> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+```
 
-- Editar o ficheiro `main.tf`, localizar o recurso `google_service_account.default` e alterar o campo `display_name`.
+> não deverá ser possível fazer ssh porque precisamos de introduzir uma firewall-tag
+> vamos então efectuar uma alteração **não-disruptiva**
+
+### 2.1 Introduzindo alterações não-disruptivas
+
+> **As alterações não disruptivas são pequenas alterações que possibilitam a re-configuração do recurso sem que este tenha que se recriado, não afetando as suas dependências**
+
+- Editar o ficheiro `main.tf`, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
 - Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
-- Localizar o recurso `google_service_account.default` e alterar o campo `account_id`
+
+
+Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
+```bash
+# para entrar via SSH
+gcloud compute ssh $(terraform output -raw vm_name) --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+```
+
+### 2.2 Introduzindo alterações disruptivas
+
+> **As alterações disruptivas são provocadas por alterações de propriedades que provocam a recriação do recurso e consequentes dependencias**
+
+- Localizar o recurso `google_compute_instance.default` e alterar o campo `name` para o seguinte: `"${random_pet.this.id}-vm-new"`
 - Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `replacement` - é uma alteração disruptiva.
 
-Aplicar o plan:
+Aplicar o plan e verificar e acompanhar verificando que irá acontecer um `destroy` seguido de um `create`:
 ```bash
 terraform apply plan.tfplan
 ```
 
-**As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
+Verificar que o SSH continua a ser possível, mesmo com a nova instância:
+```bash
+# para entrar via SSH
+gcloud compute ssh $(terraform output -raw vm_name) --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+```
 
-- Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix`
+### 2.3 Introduzindo alterações dependentes
+
+> **As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
+
+- Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `nos` para `woo`
 
 Executar o `plan` e verificar todo o grafo de dependencias é afetado
 ```bash
@@ -107,126 +120,77 @@ terraform apply plan.tfplan
 ```
 *Notem que apenas alterámos uma mera variável...*
 
-No final, destruir os recursos criados: `terraform destroy`
+>**NOTA: NÃO DESTRUIR OS RECURSOS pois vamos usa-los no próximo passo**
 
-## 3. destruir seletivamente
+## 3. importar recursos já existentes
 
-Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`
-
-Recriar os recursos:
+**Assegurar que não existem alterações pendentes:**
 
 ```bash
 # plan
 terraform plan -out plan.tfplan
 
-# apply
+# apply (caso não esteja up-to-date)
 terraform apply plan.tfplan
 ```
 
-Destruir apenas o recurso `google_service_account.default`:
+
+### 3.1 Criar uma vpc e respetiva subnet usando os comandos gcloud**
 ```bash
-# ler o aviso do terraform antes de aceitar
-terraform destroy -target="google_service_account.default"
+gcloud compute networks create $(terraform output -raw my_identifier) --project=tf-gke-lab-01-np-000001 --subnet-mode=custom
+
+gcloud compute networks subnets create default-subnet --project=tf-gke-lab-01-np-000001 --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier) --region=europe-west1
 ```
 
-No final, destruir os recursos criados: `terraform destroy`
+### 3.2 Criar os recursos manualmente
 
-## 4. importar recursos já existentes
+Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_network" "imported"`
 
+1. SE tentarem efectuar o `plan` e `apply` irá dar um erro pois o recurso já existe.
+2. Terá que ser importado para o state do terraform
 
-Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`
-
-Recriar os recursos:
-
+Proceder à importação do recurso:
 ```bash
-# plan
+terraform import google_compute_network.imported projects/$(terraform output -raw project_id)/global/networks/$(terraform output -raw my_identifier)
+```
+---
+
+Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_subnetwork" "imported"`
+
+1. SE tentarem efectuar o `plan` e `apply` irá dar um erro pois o recurso já existe.
+2. Terá que ser importado para o state do terraform
+
+Proceder à importação do recurso:
+```bash
+terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/default-subnet
+```
+
+### 3.3 Criar novos recursos dependentes dos recursos importados
+
+Neste passo iremos criar novos recursos (mais uma Virtual Machine) que irão precisar dos recursos que foram previamente importados.
+
+- Descomentar os seguintes blocos no ficheiro `import-exercise.tf`
+  - `resource "google_compute_instance" "vm2"`
+  - `resource "google_compute_firewall" "imported_iap"`
+
+Executar o `plan` e `apply` e verificar que os novos recursos vão ser criados usando as dependências que foram importadas previamente:
+```bash
+# plan & observe
 terraform plan -out plan.tfplan
 
-# apply
+# apply & observe
 terraform apply plan.tfplan
 ```
 
-Agora vamos criar uma `service_account` usando cliente `gcloud` e depois vamos importar esse recurso para o nosso terraform state.
+Após a criação dos recursos, podem (se quiserem) fazer SSH para a nova instância usando a *hint* dada pelo comando em output `terraform output vm2`.
 
-Uma vez que o identificador é gerado aleatoriamente, vamos adicionar novos `outputs` ao terraform por forma a obter um valor calculado deterministicamente, para usar posteriormente:
-
-Acrescentar o seguinte conteudo ao ficheiro `outputs.tf`:
-```bash
-output "imported_service_account_id" {
-    value = "${random_pet.this.id}-imported"
-}
-
-output "imported_service_account_id_path" {
-    value = "projects/${var.project_id}/serviceAccounts/${random_pet.this.id}-imported@${var.project_id}.iam.gserviceaccount.com"
-}
-```
-
-`plan` e `apply`:
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
-```
-Observando o resultado, temos novos outputs.
-
-Podemos obter os valores usando o `terraform output`:
-
-Obter o valor do `imported_service_account_id`:
-```bash
-terraform output imported_service_account_id
-```
-
-Com esse valor, vamos criar então a `service_account`:
-
-```bash
-# criar a service_account
-gcloud iam service-accounts --project=tf-gke-lab-01-np-000001 create $(terraform output -raw imported_service_account_id)
-```
-
-Agora que temos um recurso "rogue", podemos então importa-lo.
-
-Antes de importar, é preciso criar o recurso.
-* No ficheiro `main.tf` acrescentar o seguinte no final do ficheiro:
-```bash
-resource "google_service_account" "imported" {
-  account_id = "${random_pet.this.id}-imported"
-  project = data.google_project.this.project_id
-}
-``` 
-Neste momento, se executarmos o `plan` o terraform vai tentar criar o recurso, pois não sabe que existe um igual já criado. Se por ventura avançarmos com a criação, esta vai falhar devido a um conflito.
-
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply (deverá dar erro pois o recurso ja existe)
-terraform apply plan.tfplan
-```
-
-Por esse motivo, é que o temos que importar para o estado primeiro.
-
-Agora podemos proceder à importação do recurso:
-
-```bash
-terraform import google_service_account.imported "$(terraform output -raw imported_service_account_id_path)"
-```
-
-Se tudo correr bem, o recurso foi importado com sucesso, e passou agora a ser gerido pelo state do terraform. 
-
-**Todas as futuras alterações a este recurso passam a ser feitas por Terraform.**
-
-Se executarmos o `plan` é possível confirmar que não existem alterações:
-
-```bash
-terraform plan -out plan.tfplan
-```
 
 No final, destruir os recursos criados: 
 ```bash
 terraform destroy
 ```
+
+🔚🏁 Chegámos ao fim 🏁🔚
 
 ## Comandos úteis
 
