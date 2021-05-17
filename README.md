@@ -134,15 +134,16 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-
-### 3.1 Criar uma vpc e respetiva subnet usando os comandos gcloud**
+### 3.1 Criar uma vpc e respetiva subnet usando os comandos gcloud
 ```bash
-gcloud compute networks create $(terraform output -raw my_identifier) --project=tf-gke-lab-01-np-000001 --subnet-mode=custom
+# criar uma vpc
+gcloud compute networks create $(terraform output -raw my_identifier) --project=$(terraform output -raw project_id) --subnet-mode=custom
 
-gcloud compute networks subnets create default-subnet --project=tf-gke-lab-01-np-000001 --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier) --region=$(terraform output -raw region) 
+# criar uma subnet
+gcloud compute networks subnets create default-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier) --region=$(terraform output -raw region) 
 ```
 
-### 3.2 Criar os recursos manualmente
+### 3.2 Importar os recursos para o terraform state
 
 Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_network" "imported"`
 
@@ -208,5 +209,5 @@ gcloud compute zones list | grep europe-west1
 gcloud compute instances list --project tf-gke-lab-01-np-000001
 
 # ligar à VM usando o IAP
-cloud compute ssh <vm-name> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+gcloud compute ssh <vm-name> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
 ```
