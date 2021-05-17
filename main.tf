@@ -32,27 +32,29 @@ data "google_project" "this" {
   project_id = var.project_id
 }
 
-## local resources
+## Recursos locais
 resource "random_pet" "this" {
   length    = 2
   prefix    = local.prefix
   separator = "-"
 }
 
-## remote resources
-## google_service_account doc: https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account
-# resource "google_service_account" "default" {
-#   account_id   = "${random_pet.this.id}-sa-1"
-#   display_name = "${random_pet.this.id} pet"
-#   project      = data.google_project.this.project_id
-# }
 
 
+#### Instância de VM e respetiva subnet
 
+# referenciar a subnet já existente
+data "google_compute_subnetwork" "default" {
+  name    = "subnetwork-default"
+  region  = "europe-west1"
+}
+
+# criar uma VM
 resource "google_compute_instance" "default" {
   name         = "${random_pet.this.id}-vm"
   machine_type = "g1-small"
   zone         = "${var.region}-b"
+  tags = [ "allow-iap" ]
 
   boot_disk {
     initialize_params {
@@ -63,6 +65,4 @@ resource "google_compute_instance" "default" {
   network_interface {
     subnetwork = data.google_compute_subnetwork.default.self_link
   }
-
-  #metadata_startup_script = "echo hi > /test.txt"
 }

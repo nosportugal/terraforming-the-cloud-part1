@@ -52,6 +52,23 @@ gcloud iam service-accounts list --project=tf-gke-lab-01-np-000001
 
 ## 2. lidar com as alterações
 
+<!-- 
+
+Nesta parte queremos mudar o seguinte
+- Alterações não disruptivas: adição da tag para permitir ssh "allow-iap"
+- Alterações disruptivas: mudança do id da vm
+
+
+
+# listar as VMs
+gcloud compute instances list --project tf-gke-lab-01-np-000001
+
+# adici
+
+-->
+
+
+
 Assegurar que os recursos foram devidamente destruidos: `terraform destroy`
 
 Recriar os recursos:
@@ -222,4 +239,10 @@ gcloud compute regions list
 
 # listar as zonas disponiveis para uma dada regiao
 gcloud compute zones list | grep europe-west1
+
+# listar VMs para um dado projecto
+gcloud compute instances list --project tf-gke-lab-01-np-000001
+
+# ligar à VM usando o IAP
+cloud compute ssh <vm-name> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
 ```
