@@ -210,3 +210,16 @@ No final, destruir os recursos criados:
 ```bash
 terraform destroy
 ```
+
+## Comandos úteis
+
+```bash
+# obter a lista de machine-types
+gcloud compute machine-types list --zones=europe-west1-b --sort-by CPUS
+
+# listar a lista de regioes disponiveis
+gcloud compute regions list
+
+# listar as zonas disponiveis para uma dada regiao
+gcloud compute zones list | grep europe-west1
+```
