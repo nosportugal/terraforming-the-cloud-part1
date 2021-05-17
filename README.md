@@ -66,7 +66,7 @@ terraform apply plan.tfplan
 **Tentar entrar para a máquina via SSH**
 ```bash
 # podem obter o comando a partir do output do terraform, ou executar o seguinte
-gcloud compute ssh <vm_id> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
 ```
 
 > não deverá ser possível fazer ssh porque precisamos de introduzir uma firewall-tag

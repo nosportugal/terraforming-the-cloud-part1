@@ -55,7 +55,7 @@ resource "google_compute_instance" "default" {
   machine_type = "g1-small"
   zone         = "${var.region}-b"
   ## 2.1 - Descomentar apenas quando for pedido
-  #tags = [ "allow-iap" ]
+  tags = [ "allow-iap" ]
 
   boot_disk {
     initialize_params {

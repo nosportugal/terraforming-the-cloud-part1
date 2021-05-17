@@ -25,3 +25,7 @@ output "vm_name" {
   value = google_compute_instance.default.name
 }
 
+output "vm_zone" {
+  value = google_compute_instance.default.zone
+}
+
