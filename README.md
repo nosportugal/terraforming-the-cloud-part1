@@ -9,7 +9,9 @@ Temas abordados neste modulo:
 * Gestão de alterações: **simples**, **disruptivas** e **dependentes**.
 * Destruição seletiva de recursos.
 
-## preparar o ambiente
+## 0. preparar o ambiente
+
+### 0.1 cloud shell
 
 **autenticar a consola com o GCP**
 - Abrir o endereço <https://console.cloud.google.com> e autenticar
@@ -17,8 +19,16 @@ Temas abordados neste modulo:
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
 ``` 
+### 0.2 VSCode
 
-**clonar o projecto git que vamos usar**
+```bash
+gcloud init
+gcloud auth application-default login 
+``` 
+
+### 0.3 preparar o projeto
+
+**clonar o projeto git que vamos usar**
 ```bash
 git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
 ```
