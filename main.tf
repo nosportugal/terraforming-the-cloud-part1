@@ -51,11 +51,11 @@ data "google_compute_subnetwork" "default" {
 
 # criar uma VM
 resource "google_compute_instance" "default" {
-  name         = "${random_pet.this.id}-vm-new"
+  name         = "${random_pet.this.id}-vm"
   machine_type = "g1-small"
   zone         = "${var.region}-b"
   ## 2.1 - Descomentar apenas quando for pedido
-  tags = [ "allow-iap" ]
+  #tags = [ "allow-iap" ]
 
   boot_disk {
     initialize_params {
