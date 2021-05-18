@@ -137,10 +137,10 @@ terraform apply plan.tfplan
 ### 3.1 Criar uma vpc e respetiva subnet usando os comandos gcloud
 ```bash
 # criar uma vpc
-gcloud compute networks create $(terraform output -raw my_identifier) --project=$(terraform output -raw project_id) --subnet-mode=custom
+gcloud compute networks create $(terraform output -raw my_identifier)-vpc --project=$(terraform output -raw project_id) --subnet-mode=custom
 
 # criar uma subnet
-gcloud compute networks subnets create default-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier) --region=$(terraform output -raw region) 
+gcloud compute networks subnets create $(terraform output -raw my_identifier)-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier)-vpc --region=$(terraform output -raw region) 
 ```
 
 ### 3.2 Importar os recursos para o terraform state
@@ -152,7 +152,7 @@ Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_comp
 
 Proceder à importação do recurso:
 ```bash
-terraform import google_compute_network.imported projects/$(terraform output -raw project_id)/global/networks/$(terraform output -raw my_identifier)
+terraform import google_compute_network.imported projects/$(terraform output -raw project_id)/global/networks/$(terraform output -raw my_identifier)-vpc
 ```
 ---
 
@@ -163,7 +163,7 @@ Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_comp
 
 Proceder à importação do recurso:
 ```bash
-terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/default-subnet
+terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/$(terraform output -raw my_identifier)-subnet
 ```
 
 ### 3.3 Criar novos recursos dependentes dos recursos importados
