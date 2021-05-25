@@ -162,8 +162,13 @@ Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_comp
 
 Proceder à importação do recurso:
 ```bash
+# obter o self-link do recurso a importar do lado do GCP
+gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)"
+
+# importar o recurso
 terraform import google_compute_network.imported projects/$(terraform output -raw project_id)/global/networks/$(terraform output -raw my_identifier)-vpc
 ```
+
 ---
 
 Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_subnetwork" "imported"`
@@ -173,6 +178,10 @@ Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_comp
 
 Proceder à importação do recurso:
 ```bash
+# obter o self-link do recurso a importar do lado do GCP
+gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
+
+# importar o recurso
 terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/$(terraform output -raw my_identifier)-subnet
 ```
 
@@ -220,4 +229,10 @@ gcloud compute instances list --project tf-gke-lab-01-np-000001
 
 # ligar à VM usando o IAP
 gcloud compute ssh <vm-name> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+
+# obter o self-link de uma vpc a importar do lado do GCP
+gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)"
+
+# obter o self-link de uma subnet a importar do lado do GCP
+gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
 ```
