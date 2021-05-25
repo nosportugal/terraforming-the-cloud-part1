@@ -173,7 +173,7 @@ Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_comp
 
 Proceder à importação do recurso:
 ```bash
-terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/$(terraform output -raw my_identifier)-subnet
+terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/$(terraform output -raw my_identifier)-subnet
 ```
 
 ### 3.3 Criar novos recursos dependentes dos recursos importados
