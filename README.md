@@ -18,6 +18,7 @@ Temas abordados neste modulo:
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
+
 ``` 
 ### 0.2 VSCode
 
