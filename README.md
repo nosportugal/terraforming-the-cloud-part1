@@ -1,3 +1,4 @@
+<!-- markdownlint-disable-file MD013 -->
 # terraforming the cloud - part 1
 
 Temas abordados neste modulo:
