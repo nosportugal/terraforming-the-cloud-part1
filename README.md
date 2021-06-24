@@ -1,4 +1,3 @@
-<!-- markdownlint-disable-file MD013 -->
 # terraforming the cloud - part 1
 
 Temas abordados neste modulo:
@@ -26,7 +25,7 @@ gcloud config set project tf-gke-lab-01-np-000001
 
 ```bash
 gcloud init
-gcloud auth application-default login 
+gcloud auth application-default login
 ```
 
 ### 0.3 preparar o projeto
@@ -162,7 +161,7 @@ terraform apply plan.tfplan
 gcloud compute networks create $(terraform output -raw my_identifier)-vpc --project=$(terraform output -raw project_id) --subnet-mode=custom
 
 # criar uma subnet
-gcloud compute networks subnets create $(terraform output -raw my_identifier)-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier)-vpc --region=$(terraform output -raw region) 
+gcloud compute networks subnets create $(terraform output -raw my_identifier)-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier)-vpc --region=$(terraform output -raw region)
 ```
 
 ### 3.2 Importar os recursos para o terraform state
@@ -251,3 +250,4 @@ gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier
 # obter o self-link de uma subnet a importar do lado do GCP
 gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
 ```
+<!-- markdownlint-disable-file MD013 -->
