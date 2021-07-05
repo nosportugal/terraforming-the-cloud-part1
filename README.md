@@ -21,11 +21,14 @@ Temas abordados neste modulo:
 gcloud config set project tf-gke-lab-01-np-000001
 ```
 
-### 0.2 VSCode
+### 0.2 vscode
 
 ```bash
 gcloud init
 gcloud auth application-default login
+
+# obter a última versão do terraform
+sudo scripts/install-terraform.sh
 ```
 
 ### 0.3 preparar o projeto
@@ -34,12 +37,6 @@ clonar o projeto git que vamos usar
 
 ```bash
 git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
-```
-
-obter a última versão do terraform
-
-```bash
-sudo scripts/install-terraform.sh
 ```
 
 ## 1. o primeiro contacto
