@@ -1,7 +1,7 @@
 
 ## terraform & providers
 terraform {
-  required_version = ">= 0.14.0"
+  required_version = ">= 1.0.0"
   backend "local" {
     path = "terraform.tfstate"
   }
@@ -9,7 +9,7 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = ">= 3.64.0"
+      version = ">= 3.74.0"
     }
   }
 }
