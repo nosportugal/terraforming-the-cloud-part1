@@ -13,7 +13,13 @@
 
 **Tempo estimado**: Cerca de 2 horas
 
-Clica no botão **Start** para ires para o próximo passo.
+Antes de começares, certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
+
+```bash
+gcloud config set project tf-gke-lab-01-np-000001
+```
+
+De seguida, clica no botão **Start** para começares.
 
 ## 1. o primeiro contacto
 
