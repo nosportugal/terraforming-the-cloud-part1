@@ -13,7 +13,7 @@ Temas abordados neste modulo:
 
 ## iniciar o tutorial (setup automatico)
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://ssh.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/calexandre/terraforming-the-cloud-part1&cloudshell_tutorial=tutorial.md)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://ssh.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/nosportugal/terraforming-the-cloud-part1&cloudshell_tutorial=tutorial.md)
 
 ---
 
