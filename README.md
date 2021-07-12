@@ -1,5 +1,7 @@
 # terraforming the cloud - part 1
 
+![Terraforming the cloud architecture][tfc-arch]
+
 Temas abordados neste modulo:
 
 * Os 4 principais comandos de terraform: `init`, `plan`, `apply` e `destroy`.
@@ -9,219 +11,100 @@ Temas abordados neste modulo:
 * Gestão de alterações: **simples**, **disruptivas** e **dependentes**.
 * Destruição seletiva de recursos.
 
-## 0. preparar o ambiente
+## iniciar o tutorial (setup automatico)
 
-### 0.1 cloud shell
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.png)](https://ssh.cloud.google.com/cloudshell/open?cloudshell_git_repo=https://github.com/nosportugal/terraforming-the-cloud-part1&cloudshell_tutorial=tutorial.md)
 
- autenticar a consola com o GCP
+---
 
-* Abrir o endereço <https://console.cloud.google.com> e autenticar
+## setup do ambiente (manual)
 
-```bash
-gcloud config set project tf-gke-lab-01-np-000001
-```
+Esta secção explica como preparar o IDE para poderem executar os comandos do tutorial.
 
-### 0.2 vscode
+Abaixo seguem dois guias para configuração em:
 
-```bash
-gcloud init
-gcloud auth application-default login
+1. Google Cloud Shell
+2. Visual Studio Code
 
-# obter a última versão do terraform
-sudo scripts/install-terraform.sh
-```
+### configurar a cloud shell
 
-### 0.3 preparar o projeto
+Abrir o endereço <https://console.cloud.google.com> e autenticar.
 
-clonar o projeto git que vamos usar
+De seguida, ativar a cloud shell:
+
+![tfc-cloudshell-activate]
+
+Abrir em nova janela:
+
+![tfc-cloushell-open-new]
+
+Abrir editor:
+
+![tfc-cloushell-open-editor]
+
+Fechar a janela do terminal no fundo:
+
+![tfc-cloushell-close-terminal]
+
+Abrir novo terminal (embebido no editor):
+
+![tfc-cloushell-new-terminal]
+
+Clonar o projeto:
 
 ```bash
 git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
 ```
 
-## 1. o primeiro contacto
+Abrir o editor na pasta do projeto:
+
+![tfc-cloushell-open-folder]
+
+E agora que têm o editor pronto, podemos autenticar a consola com o GCP:
 
 ```bash
-# init
-terraform init
-
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
-
-## verificar que o recurso remoto foi criado
-gcloud compute instances list --project tf-gke-lab-01-np-000001
-
-# destroy
-terraform destroy
-
-## verificar que o recurso remoto foi destruido
-gcloud compute instances list --project tf-gke-lab-01-np-000001
+gcloud config set project tf-gke-lab-01-np-000001
 ```
 
-## 2. lidar com as alterações
-
-> *Assegurar que os recursos previamente criados foram devidamente destruidos: `terraform destroy`.`*
-
-### Assegurar a recriação dos recursos (`plan` e `apply`)
+Para iniciar o tutorial, executamos o seguinte comando na consola:
 
 ```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply
-terraform apply plan.tfplan
+teachme tutorial.md
 ```
 
-### Tentar entrar para a máquina via SSH
+## configurar o vscode
+
+> apenas válido para vscode em WSL (windows-subsystem-linux) - instalações em powershell não são suportadas
+
+Caso decidam usar o `vscode`, é necessário garantirem que têm os seguintes binários instalados.
+As instruções que seguem vão instalar as tools necessárias:
+
+1. terraform
+2. kubectl
+3. gcloud
 
 ```bash
-# podem obter o comando a partir do output do terraform, ou executar o seguinte
-gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
+# instalar as tools necessárias (podem skipar se já têm instaladas)
+sudo ./scripts/install-terraform.sh        # terraform
+sudo ./scripts/install-kubectl.sh          # kubectl
+curl https://sdk.cloud.google.com | bash   # gcloud
+
+# reinicializar a shell
+exec -l $SHELL
+
+# inicializar o cliente gcloud
+gcloud init
+gcloud auth application-default login
+
+# definir o projeto por defeito (opcional)
+gcloud config set project tf-gke-lab-01-np-000001
 ```
 
-> não deverá ser possível fazer ssh porque precisamos de introduzir uma firewall-tag
-> vamos então efectuar uma alteração **não-disruptiva**
-
-### 2.1 Introduzindo alterações não-disruptivas
-
-> **As alterações não disruptivas são pequenas alterações que possibilitam a re-configuração do recurso sem que este tenha que se recriado, não afetando as suas dependências**
-
-* Editar o ficheiro `main.tf`, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
-* Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
-
-Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
+Por fim, podemos clonar o projeto:
 
 ```bash
-# para entrar via SSH
-gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
+git clone https://github.com/nosportugal/terraforming-the-cloud-part1 && cd terraforming-the-cloud-part1
 ```
-
-### 2.2 Introduzindo alterações disruptivas
-
-> **As alterações disruptivas são provocadas por alterações de propriedades que provocam a recriação do recurso e consequentes dependencias**
-
-* Localizar o recurso `google_compute_instance.default` e alterar o campo `name` para o seguinte: `"${random_pet.this.id}-vm-new"`
-* Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `replacement` - é uma alteração disruptiva.
-
-Aplicar o plan e verificar e acompanhar verificando que irá acontecer um `destroy` seguido de um `create`:
-
-```bash
-terraform apply plan.tfplan
-```
-
-Verificar que o SSH continua a ser possível, mesmo com a nova instância:
-
-```bash
-# para entrar via SSH
-gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
-```
-
-### 2.3 Introduzindo alterações dependentes
-
-> **As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
-
-* Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `nos` para `woo`
-
-Executar o `plan` e verificar todo o grafo de dependencias é afetado
-
-```bash
-# plan & observe
-terraform plan -out plan.tfplan
-
-# apply & observe
-terraform apply plan.tfplan
-```
-
-*Notem que apenas alterámos uma mera variável...*
-
->**NOTA: NÃO DESTRUIR OS RECURSOS pois vamos usa-los no próximo passo**
-
-## 3. importar recursos já existentes
-
-**Assegurar que não existem alterações pendentes:**
-
-```bash
-# plan
-terraform plan -out plan.tfplan
-
-# apply (caso não esteja up-to-date)
-terraform apply plan.tfplan
-```
-
-### 3.1 Criar uma vpc e respetiva subnet usando os comandos gcloud
-
-```bash
-# criar uma vpc
-gcloud compute networks create $(terraform output -raw my_identifier)-vpc --project=$(terraform output -raw project_id) --subnet-mode=custom
-
-# criar uma subnet
-gcloud compute networks subnets create $(terraform output -raw my_identifier)-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier)-vpc --region=$(terraform output -raw region)
-```
-
-### 3.2 Importar os recursos para o terraform state
-
-Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_network" "imported"`
-
-1. SE tentarem efectuar o `plan` e `apply` irá dar um erro pois o recurso já existe.
-2. Terá que ser importado para o state do terraform
-
-Proceder à importação do recurso:
-
-```bash
-# obter o self-link do recurso a importar do lado do GCP
-gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)"
-
-# importar o recurso
-terraform import google_compute_network.imported projects/$(terraform output -raw project_id)/global/networks/$(terraform output -raw my_identifier)-vpc
-```
-
----
-
-Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_subnetwork" "imported"`
-
-1. SE tentarem efectuar o `plan` e `apply` irá dar um erro pois o recurso já existe.
-2. Terá que ser importado para o state do terraform
-
-Proceder à importação do recurso:
-
-```bash
-# obter o self-link do recurso a importar do lado do GCP
-gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
-
-# importar o recurso
-terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/$(terraform output -raw my_identifier)-subnet
-```
-
-### 3.3 Criar novos recursos dependentes dos recursos importados
-
-Neste passo iremos criar novos recursos (mais uma Virtual Machine) que irão precisar dos recursos que foram previamente importados.
-
-* Descomentar os seguintes blocos no ficheiro `import-exercise.tf`
-  * `resource "google_compute_instance" "vm2"`
-  * `resource "google_compute_firewall" "imported_iap"`
-
-Executar o `plan` e `apply` e verificar que os novos recursos vão ser criados usando as dependências que foram importadas previamente:
-
-```bash
-# plan & observe
-terraform plan -out plan.tfplan
-
-# apply & observe
-terraform apply plan.tfplan
-```
-
-Após a criação dos recursos, podem (se quiserem) fazer SSH para a nova instância usando a *hint* dada pelo comando em output `terraform output vm2`.
-
-No final, destruir os recursos criados:
-
-```bash
-terraform destroy
-```
-
-🔚🏁 Chegámos ao fim 🏁🔚
 
 ## Comandos úteis
 
@@ -248,3 +131,21 @@ gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier
 gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
 ```
 <!-- markdownlint-disable-file MD013 -->
+
+ [//]: # (*****************************)
+ [//]: # (INSERT IMAGE REFERENCES BELOW)
+ [//]: # (*****************************)
+
+[tfc-arch]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/terraforming-the-cloud.png "Terraforming the cloud architecture"
+
+[tfc-cloudshell-activate]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-activate.png "Cloudshell activate screenshot"
+
+[tfc-cloushell-open-new]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-open-new.png "Cloudshell open new window screenshot"
+
+[tfc-cloushell-open-editor]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-open-editor.png "Cloudshell open editor screenshot"
+
+[tfc-cloushell-close-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-close-terminal.png "Cloudshell close terminal window screenshot"
+
+[tfc-cloushell-new-terminal]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-new-terminal.png "Cloudshell new terminal window screenshot"
+
+[tfc-cloushell-open-folder]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-open-folder.png "Cloudshell open folder screenshot"
