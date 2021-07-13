@@ -196,12 +196,35 @@ gcloud compute networks subnets create $(terraform output -raw my_identifier)-su
 
 Agora iremos colocar em prática os comandos de `import` para passar a gerir os recursos pelo terraform.
 
-Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_network" "imported"`
+Ir ao ficheiro `import-exercise.tf` e descomentar os blocos
+
+* `resource "google_compute_network" "imported"`
+* `resource "google_compute_subnetwork" "imported"`
 
 1. SE tentarem efectuar o `plan` e `apply` irá dar um erro pois o recurso já existe.
 2. Terá que ser importado para o state do terraform
 
-Para proceder à importação, precisamos de obter o self-link do recurso a importar do lado do GCP tal como descrito nas [instruções de importação](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network#import).
+Verificar que o terraform vai tentar criar os recursos porque ainda não estão importados:
+
+Executar o `plan` seguido pelo `apply`:
+
+```bash
+terraform plan -out plan.tfplan
+```
+
+```bash
+terraform apply plan.tfplan
+```
+
+**O que vai acontecer é que o GCP vai retornar um erro `4xx` indicando que estamos a tentar criar um recurso que já existe - é normal e esperado pois precisamos de proceder à importação.**
+
+---
+
+Para proceder à importação, precisamos de obter o `self_link` do recurso a importar do lado do GCP tal como descrito nas instruções de importação para o recurso [`google_compute_network`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network#import) e [`google_compute_subnetwork`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#import).
+
+Se precisarem, podem obter o `uri` do recurso usando os seguinte comandos
+
+Obter o `uri` para a `google_compute_network`:
 
 ```bash
 gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)"
@@ -217,9 +240,7 @@ terraform import google_compute_network.imported projects/$(terraform output -ra
 
 Agora temos que fazer o mesmo para o recurso `google_compute_subnetwork`.
 
-Ir ao ficheiro `import-exercise.tf` e descomentar o bloco `resource "google_compute_subnetwork" "imported"`
-
-Obter o self-link do recurso a importar do lado do GCP:
+Obter o `uri` para a `google_compute_subnetwork`:
 
 ```bash
 gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
@@ -229,6 +250,14 @@ Importar o recurso:
 
 ```bash
 terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/$(terraform output -raw my_identifier)-subnet
+```
+
+> Agora, se tentarmos agora fazer `plan`, vamos verificar que o terraform indica que não tem alterações à infraestrutura, confirmando que os recursos foram importados som sucesso.
+
+Testar o `plan`:
+
+```bash
+terraform plan -out plan.tfplan
 ```
 
 ### 3.3 Criar novos recursos dependentes dos recursos importados
@@ -253,7 +282,11 @@ Observar o `apply`:
 terraform apply plan.tfplan
 ```
 
-Após a criação dos recursos, podem fazer SSH para a nova instância usando a *hint* dada pelo comando em output `terraform output vm2`.
+> **Tip**: após a criação dos recursos, podem fazer SSH para a nova instância usando a *hint* dada pelo comando em output.
+
+```bash
+terraform output vm2
+```
 
 ## 4. wrap-up & destroy
 
