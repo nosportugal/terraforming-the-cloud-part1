@@ -13,7 +13,21 @@
 
 **Tempo estimado**: Cerca de 2 horas
 
-Antes de começares, certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
+**Pré requsitos**: Antes de começares, é necessário verificares algumas coisas:
+
+Junta-te à **Cloud Guild** no Teams e segue os tutorias da Wiki do GCP.
+
+Depois pede para te adicionarem ao projeto no GCP.
+
+De seguida vais ter de configurar o GCP. Se já tens o `gcloud` instalado corre este comando:
+
+```bash
+gcloud auth application-default login
+```
+
+Podes econtrar mais info sobre a auth [aqui](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started).
+
+Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
 gcloud config set project tf-gke-lab-01-np-000001
@@ -104,10 +118,11 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 ### 2.1 Introduzindo alterações não-disruptivas
 
-> **As alterações não disruptivas são pequenas alterações que possibilitam a re-configuração do recurso sem que este tenha que se recriado, não afetando as suas dependências**
+> **As alterações não disruptivas são pequenas alterações que possibilitam a re-configuração do recurso sem que este tenha que ser recriado, não afetando as suas dependências**
 
 * Editar o ficheiro `main.tf`, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
 * Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
+* Executar `terraform apply plan.tfplan`.
 
 Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
 
