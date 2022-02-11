@@ -25,7 +25,7 @@ De seguida vais ter de configurar o GCP. Se já tens o `gcloud` instalado corre 
 gcloud auth application-default login
 ```
 
-Podes econtrar mais info sobre a auth *[aqui](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started)
+Podes econtrar mais info sobre a auth [aqui](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started).
 
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
