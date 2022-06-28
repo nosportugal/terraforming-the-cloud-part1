@@ -21,6 +21,8 @@ Depois pede para te adicionarem ao projeto no GCP.
 
 De seguida vais ter de configurar o GCP. Se já tens o `gcloud` instalado corre este comando:
 
+**NOTA: Se estás a executar tutorial na cloudshell (consola do GCP), não precisas de correr este comando.**
+
 ```bash
 gcloud auth application-default login
 ```
@@ -122,7 +124,16 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 * Editar o ficheiro `main.tf`, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
 * Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
+
+```bash
+terraform plan -out plan.tfplan
+```
+
 * Executar `terraform apply plan.tfplan`.
+
+```bash
+terraform apply plan.tfplan
+```
 
 Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
 
