@@ -135,7 +135,7 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
+* Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
 
 ```bash
 gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
@@ -148,13 +148,17 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 * Localizar o recurso `google_compute_instance.default` e alterar o campo `name` para o seguinte: `"${random_pet.this.id}-vm-new"`
 * Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `replacement` - é uma alteração disruptiva.
 
-Aplicar o `plan`, verificar e acompanhar observando na execução do terraform que irá acontecer um `destroy` seguido de um `create`:
+```bash
+terraform plan -out plan.tfplan
+```
+
+* Aplicar o `plan`, verificar e acompanhar observando na execução do terraform que irá acontecer um `destroy` seguido de um `create`:
 
 ```bash
 terraform apply plan.tfplan
 ```
 
-Verificar que o SSH continua a ser possível, mesmo com a nova instância:
+* Verificar que o SSH continua a ser possível, mesmo com a nova instância:
 
 ```bash
 gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
@@ -309,6 +313,8 @@ terraform apply plan.tfplan
 ```
 
 > **Tip**: após a criação dos recursos, podem fazer SSH para a nova instância usando a *hint* dada pelo comando em output.
+>
+> *Se o comando não funcionar à primeira, esperem 1 minuto e tentem novamente, pois a VM ainda pode estar a ser aprovisionada.*
 
 ```bash
 terraform output vm2
