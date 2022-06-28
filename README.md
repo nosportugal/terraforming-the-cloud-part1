@@ -168,4 +168,4 @@ gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_id
 
 [tfc-cloushell-error-reserved-id]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-open-error-reserved-id.jpg "Cloudshell error reserved-id"
 
-[tfc-cloushell-error-open-tutorial]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-open-error-reserved-id.jpg "Cloudshell error open tuturial"
+[tfc-cloushell-error-open-tutorial]: https://github.com/nosportugal/terraforming-the-cloud-part1/raw/main/images/cloudshell-open-error-close-tutorial.jpg "Cloudshell error open tuturial"
