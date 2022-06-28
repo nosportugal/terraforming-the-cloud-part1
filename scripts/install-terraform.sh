@@ -1,6 +1,6 @@
 #!/bin/bash
 
-tfversion=1.0.1
+tfversion=1.2.3
 
 wget "https://releases.hashicorp.com/terraform/$tfversion/terraform_${tfversion}_linux_amd64.zip"
 unzip -o terraform_${tfversion}_linux_amd64.zip
