@@ -330,29 +330,38 @@ Normalmente a operação mais usada vai ser a renomeação de modulos, no entant
 
 > **Note**: Explicit refactoring declarations with moved blocks is available in Terraform v1.1 and later. For earlier Terraform versions or for refactoring actions too complex to express as moved blocks, you can use the `terraform state mv` CLI command as a separate step.
 
-### 4.1 Renomear um recursos já existente
+### 4.1 Renomear um recurso já existente
 
-Ir ao ficheiro `import-exercise.tf` e na linha `30`:
+Ir ao ficheiro `import-exercise.tf`:
 
-* Alterar o nome do recurso `resource "google_compute_instance" "vm2"` para `vm2_moved`
+* Na linha `17`, alterar o nome do recurso `resource "google_compute_firewall" "imported_iap"` para `imported_iap_moved`
+* Na linha `48`, alterar a referencia `google_compute_firewall.imported_iap` para `google_compute_firewall.imported_iap_moved`
 
-Verificar que o `terraform plan` quer destruir a `vm2` e criar a `vm2_moved`.
+Verificar que o `terraform plan` quer destruir a `imported_iap` e criar a `imported_iap_moved`.
 
 ```bash
 terraform plan -out plan.tfplan
 ```
 
-Vamos então sinalizar o terraform que queremos mover o recurso do nome `vm2` para `vm2_moved`.
+Vamos então sinalizar o terraform que queremos mover o recurso do nome `imported_iap` para `imported_iap_moved`.
 
 * Descomentar os seguintes bloco `4.1` no ficheiro `move-exercise.tf`
 
 ><sub>💡 Também é possível fazer o move usando o comando `terraform mv 'google_compute_instance.vm2'  'google_compute_instance.vm2_moved'` porém, este comando é avançado e requer algum cuidado na execução do mesmo. Por esse motivo, é recomendad a utilização do `moved` block.</sub>
 
-Verificar que o `terraform plan` indica que não existem alterações:
+Verificar que o `terraform plan` indica que o recurso vai ser movido:
 
 ```bash
 terraform plan -out plan.tfplan
 ```
+
+Executar `terraform apply` para alterar o state:
+
+```bash
+terraform apply plan.tfplan
+```
+
+> 💡 Após o move ser aplicado, pode-se apagar o `moved` block.
 
 ## 5. wrap-up & destroy
 
