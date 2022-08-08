@@ -347,7 +347,7 @@ Vamos então sinalizar o terraform que queremos mover o recurso do nome `importe
 
 * Descomentar os seguintes bloco `4.1` no ficheiro `move-exercise.tf`
 
-><sub>💡 Também é possível fazer o move usando o comando `terraform mv 'google_compute_instance.vm2'  'google_compute_instance.vm2_moved'` porém, este comando é avançado e requer algum cuidado na execução do mesmo. Por esse motivo, é recomendad a utilização do `moved` block.</sub>
+><sub>💡 Também é possível fazer o move usando o comando `terraform mv 'google_compute_firewall.imported_iap'  'google_compute_firewall.imported_iap_moved'` porém, este comando é avançado e requer algum cuidado na execução do mesmo. Por esse motivo, é recomendad a utilização do `moved` block.</sub>
 
 Verificar que o `terraform plan` indica que o recurso vai ser movido:
 
