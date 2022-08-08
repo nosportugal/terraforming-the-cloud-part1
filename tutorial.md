@@ -320,7 +320,41 @@ terraform apply plan.tfplan
 terraform output vm2
 ```
 
-## 4. wrap-up & destroy
+## 4. Refactoring do código
+
+Disponível a partir do terraform `v1.1`. Mais informação [aqui](https://www.terraform.io/language/modules/develop/refactoring).
+
+O processo de refactoring do terraform é essencial quando pretendemos fazer alterações ao nosso código por forma a melhorar a legibilidade ou aplicar os principios DRY.
+
+Normalmente a operação mais usada vai ser a renomeação de modulos, no entanto, o principio é o mesmo para outro tipo de operações.
+
+> **Note**: Explicit refactoring declarations with moved blocks is available in Terraform v1.1 and later. For earlier Terraform versions or for refactoring actions too complex to express as moved blocks, you can use the `terraform state mv` CLI command as a separate step.
+
+### 4.1 Renomear um recursos já existente
+
+Ir ao ficheiro `import-exercise.tf` e na linha `30`:
+
+* Alterar o nome do recurso `resource "google_compute_instance" "vm2"` para `vm2_moved`
+
+Verificar que o `terraform plan` quer destruir a `vm2` e criar a `vm2_moved`.
+
+```bash
+terraform plan -out plan.tfplan
+```
+
+Vamos então sinalizar o terraform que queremos mover o recurso do nome `vm2` para `vm2_moved`.
+
+* Descomentar os seguintes bloco `4.1` no ficheiro `move-exercise.tf`
+
+><sub>💡 Também é possível fazer o move usando o comando `terraform mv 'google_compute_instance.vm2'  'google_compute_instance.vm2_moved'` porém, este comando é avançado e requer algum cuidado na execução do mesmo. Por esse motivo, é recomendad a utilização do `moved` block.</sub>
+
+Verificar que o `terraform plan` indica que não existem alterações:
+
+```bash
+terraform plan -out plan.tfplan
+```
+
+## 5. wrap-up & destroy
 
 Destruir os conteúdos!
 
