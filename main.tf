@@ -45,8 +45,8 @@ resource "random_pet" "this" {
 
 # referenciar a subnet já existente
 data "google_compute_subnetwork" "default" {
-  name    = "subnetwork-default"
-  region  = var.region
+  name   = "subnetwork-default"
+  region = var.region
 }
 
 # criar uma VM
@@ -59,7 +59,7 @@ resource "google_compute_instance" "default" {
 
   boot_disk {
     initialize_params {
-      image = "debian-cloud/debian-9"
+      image = "debian-cloud/debian-11"
     }
   }
 

@@ -1,11 +1,11 @@
 
-# 3.2 Descomentar apenas quando for pedido
+## 3.2 Descomentar apenas quando for pedido
 #resource "google_compute_network" "imported" {
 #  name                    = "${random_pet.this.id}-vpc"
 #  auto_create_subnetworks = false
 #}
 
-# 3.2 Descomentar apenas quando for pedido
+## 3.2 Descomentar apenas quando for pedido
 #resource "google_compute_subnetwork" "imported" {
 #  name          = "${random_pet.this.id}-subnet"
 #  region        = var.region
@@ -13,7 +13,7 @@
 #  network       = google_compute_network.imported.id
 #}
 
-# 3.3 Descomentar apenas quando for pedido
+## 3.3 Descomentar apenas quando for pedido
 # resource "google_compute_firewall" "imported_iap" {
 #  name    = "${random_pet.this.id}-fw-iap"
 #  network = google_compute_network.imported.name
@@ -35,7 +35,7 @@
 
 #  boot_disk {
 #    initialize_params {
-#      image = "debian-cloud/debian-9"
+#      image = "debian-cloud/debian-11"
 #    }
 #  }
 
