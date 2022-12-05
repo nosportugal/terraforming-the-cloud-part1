@@ -370,9 +370,9 @@ Neste exercicio o objectivo é aplicar alguns dos conhecimentos adquiridos nesta
 Prentende-se o seguinte:
 
 * 👉 Devem fazer o exercicio no ficheiro `final-exercise.tf`.
-* 👉 Criar uma [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account) com os seguintes requisitos:
+* 👉 Criar uma `google_service_account` com os seguintes requisitos:
   * `account_id` deverá ser prefixada com valor definido no recurso `random_pet.this` para evitar colisões de nomes
-* 👉 Criar uma [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) com os seguintes requisitos:
+* 👉 Criar uma `google_compute_instance` com os seguintes requisitos:
   * Nome da máquina deverá ser prefixado com valor definido no recurso `random_pet.this` para evitar colisões de nomes
   * Tipo de máquina: `e2-small`
   * Zona: `europe-west1-b`
@@ -383,13 +383,18 @@ Prentende-se o seguinte:
 
 ### Ajudas
 
+<details><summary>Abrir para ver ajudas</summary>
+
 > 💡 Usem a pesquisa no terraform registry / google para saberem mais informação acerca dos recursos que estão a usar:
 >
 > * [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account)
 > * [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)
 >
+> 💡 Uma subnet já existente poderá ser `data.google_compute_subnetwork.default.self_link`
 >
 > 💡 Caso não consigam fazer `ssh`, também podem consultar a descrição da VM recorrendo ao comando: `gcloud compute instances describe COMPUTE_INSTANCE_NAME --zone=COMPUTE_INSTANCE_ZONE`
+
+</details>
 
 ## 6. wrap-up & destroy
 
