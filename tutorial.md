@@ -363,7 +363,35 @@ terraform apply plan.tfplan
 
 > 💡 Após o move ser aplicado, pode-se apagar o `moved` block.
 
-## 5. wrap-up & destroy
+## 5. Exercício
+
+Neste exercicio o objectivo é aplicar alguns dos conhecimentos adquiridos nesta sessão sem que exista uma solução pronta para descomentarem 😉.
+
+Prentende-se o seguinte:
+
+* 👉 Devem fazer o exercicio no ficheiro `final-exercise.tf`.
+* 👉 Criar uma [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account) com os seguintes requisitos:
+  * `account_id` deverá ser prefixada com valor definido no recurso `random_pet.this` para evitar colisões de nomes
+* 👉 Criar uma [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) com os seguintes requisitos:
+  * Nome da máquina deverá ser prefixado com valor definido no recurso `random_pet.this` para evitar colisões de nomes
+  * Tipo de máquina: `e2-small`
+  * Zona: `europe-west1-b`
+  * Deverá conter uma tag `allow-iap`
+  * A rede (`subnetwork`) onde a VM vai correr fica ao vosso critério: podem criar uma nova, ou podem usar as já existentes.
+  * A máquina deverá correr com a `google_service_account` previamente.
+* 👉 Por fim, deverão testar o correto aprovisionamento fazendo `ssh` para a máquina que acabaram de criar.
+
+### Ajudas
+
+> 💡 Usem a pesquisa no terraform registry / google para saberem mais informação acerca dos recursos que estão a usar:
+>
+> * [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account)
+> * [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)
+>
+>
+> 💡 Caso não consigam fazer `ssh`, também podem consultar a descrição da VM recorrendo ao comando: `gcloud compute instances describe COMPUTE_INSTANCE_NAME --zone=COMPUTE_INSTANCE_ZONE`
+
+## 6. wrap-up & destroy
 
 Destruir os conteúdos!
 
