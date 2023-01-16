@@ -12,5 +12,5 @@ variable "region" {
 variable "prefix" {
   type        = string
   description = "A simple prefix"
-  default     = "nos"
+  default     = "gcp"
 }

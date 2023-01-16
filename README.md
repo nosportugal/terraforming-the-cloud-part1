@@ -79,7 +79,7 @@ Abrir o editor na pasta do projeto:
 E agora que têm o editor pronto, podemos autenticar a consola com o GCP:
 
 ```bash
-gcloud config set project tf-gke-lab-01-np-000001
+gcloud config set project <project-id>
 ```
 
 Para iniciar o tutorial, executamos o seguinte comando na consola:
@@ -113,7 +113,7 @@ gcloud init
 gcloud auth application-default login
 
 # definir o projeto por defeito (opcional)
-gcloud config set project tf-gke-lab-01-np-000001
+gcloud config set project <project-id>
 ```
 
 Por fim, podemos clonar o projeto:
@@ -135,10 +135,10 @@ gcloud compute regions list
 gcloud compute zones list | grep europe-west1
 
 # listar VMs para um dado projecto
-gcloud compute instances list --project tf-gke-lab-01-np-000001
+gcloud compute instances list --project <project-id>
 
 # ligar à VM usando o IAP
-gcloud compute ssh <vm-name> --project=tf-gke-lab-01-np-000001 --zone europe-west1-b
+gcloud compute ssh <vm-name> --project=<project-id>1 --zone europe-west1-b
 
 # obter o self-link de uma vpc a importar do lado do GCP
 gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)"

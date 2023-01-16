@@ -15,25 +15,16 @@
 
 **Pré requsitos**: Antes de começares, é necessário verificares algumas coisas:
 
-Junta-te à **Cloud Guild** no Teams e segue os tutorias da Wiki do GCP.
-
-Depois pede para te adicionarem ao projeto no GCP.
-
-De seguida vais ter de configurar o GCP. Se já tens o `gcloud` instalado corre este comando:
-
-**NOTA: Se estás a executar tutorial na cloudshell (consola do GCP), não precisas de correr este comando.**
-
-```bash
-gcloud auth application-default login
-```
-
-Podes econtrar mais info sobre a auth [aqui](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started).
-
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
-gcloud config set project tf-gke-lab-01-np-000001
+gcloud config set project <project-id>
 ```
+
+Para evitar que o terraform peça o nome do projeto a cada `apply`, podemos definir o nome do projeto por defeito:
+
+* Abrir o ficheiro `terraform.tfvars`
+* Descomentar a linha `project_id` e adicionar o id do projeto.
 
 De seguida, clica no botão **Start** para começares.
 
@@ -72,7 +63,7 @@ terraform apply plan.tfplan
 verificar que o recurso remoto foi criado:
 
 ```bash
-gcloud compute instances list --project tf-gke-lab-01-np-000001
+gcloud compute instances list
 ```
 
 ### Comando `destroy`
@@ -88,7 +79,7 @@ terraform destroy
 verificar que o recurso remoto foi destruido:
 
 ```bash
-gcloud compute instances list --project tf-gke-lab-01-np-000001
+gcloud compute instances list
 ```
 
 ## 2. lidar com as alterações
@@ -168,7 +159,7 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 > **As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
 
-* Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `nos` para `woo`
+* Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `gcp` para `new`
 
 Executar o `plan` e verificar todo o grafo de dependencias é afetado:
 
