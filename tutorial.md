@@ -32,7 +32,7 @@ Podes econtrar mais info sobre a auth [aqui](https://registry.terraform.io/provi
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
-gcloud config set project tf-gke-lab-01-np-000001
+gcloud config set project <project-id>
 ```
 
 De seguida, clica no botão **Start** para começares.
@@ -72,7 +72,7 @@ terraform apply plan.tfplan
 verificar que o recurso remoto foi criado:
 
 ```bash
-gcloud compute instances list --project tf-gke-lab-01-np-000001
+gcloud compute instances list
 ```
 
 ### Comando `destroy`
@@ -88,7 +88,7 @@ terraform destroy
 verificar que o recurso remoto foi destruido:
 
 ```bash
-gcloud compute instances list --project tf-gke-lab-01-np-000001
+gcloud compute instances list
 ```
 
 ## 2. lidar com as alterações
@@ -168,7 +168,7 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 > **As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
 
-* Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `nos` para `woo`
+* Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `gcp` para `new`
 
 Executar o `plan` e verificar todo o grafo de dependencias é afetado:
 
