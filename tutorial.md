@@ -18,7 +18,8 @@
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
-gcloud config set project <project-id>
+gcloud config set project <project-id> &&
+gcloud config set accessibility/screen_reader false
 ```
 
 Para evitar que o terraform peça o nome do projeto a cada `apply`, podemos definir o nome do projeto por defeito:
