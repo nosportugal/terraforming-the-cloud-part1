@@ -15,25 +15,16 @@
 
 **Pré requsitos**: Antes de começares, é necessário verificares algumas coisas:
 
-Junta-te à **Cloud Guild** no Teams e segue os tutorias da Wiki do GCP.
-
-Depois pede para te adicionarem ao projeto no GCP.
-
-De seguida vais ter de configurar o GCP. Se já tens o `gcloud` instalado corre este comando:
-
-**NOTA: Se estás a executar tutorial na cloudshell (consola do GCP), não precisas de correr este comando.**
-
-```bash
-gcloud auth application-default login
-```
-
-Podes econtrar mais info sobre a auth [aqui](https://registry.terraform.io/providers/hashicorp/google/latest/docs/guides/getting_started).
-
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
 gcloud config set project <project-id>
 ```
+
+Para evitar que o terraform peça o nome do projeto a cada `apply`, podemos definir o nome do projeto por defeito:
+
+* Abrir o ficheiro `terraform.tfvars`
+* Descomentar a linha `project_id` e adicionar o id do projeto.
 
 De seguida, clica no botão **Start** para começares.
 
