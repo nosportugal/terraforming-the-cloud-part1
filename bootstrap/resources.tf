@@ -16,14 +16,16 @@ resource "google_compute_subnetwork" "default" {
 }
 
 resource "google_compute_firewall" "default" {
-  name     = "fw-ingressfromiap-p-01"
-  network  = google_compute_network.default.name
-  priority = 1000
+  name        = "fw-ingressfromiap-p-01"
+  description = "Allow Ingress From iap for SSH"
+  network     = google_compute_network.default.name
+  priority    = 1000
 
   allow {
     protocol = "tcp"
     ports    = ["22"]
   }
 
-  source_tags = ["allow-iap"]
+  target_tags   = ["allow-iap"]
+  source_ranges = ["35.235.240.0/20"]
 }
