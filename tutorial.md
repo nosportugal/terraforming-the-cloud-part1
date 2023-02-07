@@ -375,8 +375,23 @@ Prentende-se o seguinte:
 
 ### Ajudas
 
-<details><summary>Abrir para ver ajudas</summary>
+<details><summary>Abrir/scroll-down para ver ajudas</summary>
 
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
+>
 > 💡 Usem a pesquisa no terraform registry / google para saberem mais informação acerca dos recursos que estão a usar:
 >
 > * [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account)
