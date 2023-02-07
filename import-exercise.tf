@@ -19,36 +19,36 @@
 #  network = google_compute_network.imported.name
 #  description = "Allow Ingress From iap for SSH and RDP"
 #  source_ranges = ["35.235.240.0/20"]
-
+#
 #  allow {
 #    protocol = "tcp"
 #    ports    = ["22", "3389"]
 #  }
 #  target_tags = ["allow-iap"]
 # }
-
+#
 # resource "google_compute_instance" "vm2" {
 #  name         = "${random_pet.this.id}-vm2"
 #  machine_type = "g1-small"
 #  zone         = "${var.region}-b"
 #  tags = [ "allow-iap" ]
-
+#
 #  boot_disk {
 #    initialize_params {
 #      image = "debian-cloud/debian-11"
 #    }
 #  }
-
+#
 #  network_interface {
 #    subnetwork = google_compute_subnetwork.imported.self_link
 #  }
-
+#
 #  # se virem isto, avisem-me que eu explico porque 😎
 #  depends_on = [
 #    google_compute_firewall.imported_iap
 #  ]
 # }
-
+#
 # output "vm2" {
 #  value = {
 #    vm_name = google_compute_instance.vm2.name
