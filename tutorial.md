@@ -363,9 +363,9 @@ Prentende-se o seguinte:
 
 * 👉 Devem fazer o exercicio no ficheiro `final-exercise.tf`.
 * 👉 Criar uma Google Cloud Service Account com os seguintes requisitos:
-  * `account_id` deverá ser prefixada com valor definido no recurso `random_pet.this` para evitar colisões de nomes
+  * `account_id` deverá ser prefixada com valor definido no recurso `random_pet.this.id` para evitar colisões de nomes
 * 👉 Criar uma Google Cloud Compute Instance com os seguintes requisitos:
-  * Nome da máquina deverá ser prefixado com valor definido no recurso `random_pet.this` para evitar colisões de nomes
+  * Nome da máquina deverá ser prefixado com valor definido no recurso `random_pet.this.id` para evitar colisões de nomes
   * Tipo de máquina: `e2-small`
   * Zona: `europe-west1-b`
   * Deverá conter uma tag `allow-iap`
