@@ -370,7 +370,7 @@ Prentende-se o seguinte:
   * Zona: `europe-west1-b`
   * Deverá conter uma tag `allow-iap`
   * A rede (`subnetwork`) onde a VM vai correr fica ao vosso critério: podem criar uma nova, ou podem usar as já existentes.
-  * A máquina deverá correr com a `google_service_account` previamente.
+  * A máquina deverá correr com a `google_service_account` previamente criada.
 * 👉 Por fim, deverão testar o correto aprovisionamento fazendo `ssh` para a máquina que acabaram de criar.
 
 ### Ajudas
