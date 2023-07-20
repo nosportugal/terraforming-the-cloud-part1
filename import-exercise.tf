@@ -11,6 +11,13 @@
 #  region        = var.region
 #  ip_cidr_range = "10.0.0.0/9"
 #  network       = google_compute_network.imported.id
+#
+#  log_config { # This is required due to an organization policy
+#    aggregation_interval = "INTERVAL_10_MIN"
+#    flow_sampling        = 0.3
+#    metadata             = "EXCLUDE_ALL_METADATA"
+#  }
+#
 #}
 
 ## 3.3 Descomentar apenas quando for pedido
