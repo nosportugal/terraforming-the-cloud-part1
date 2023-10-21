@@ -9,7 +9,7 @@
 * `terrafom.tfvars` é usado por defeito se tiver presente na mesma diretória.
 * Os 4 principais comandos de terraform: `init`, `plan`, `apply` e `destroy`.
 * Gestão de alterações: **simples**, **disruptivas** e **dependentes**.
-* Destruição seletiva de recursos.
+* Importação de recursos existentes.
 
 **Tempo estimado**: Cerca de 2 horas
 
@@ -18,8 +18,7 @@
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
-gcloud config set project <project-id> &&
-gcloud config set accessibility/screen_reader false
+gcloud config set project tf-gke-lab-01-np-000001 && gcloud config set accessibility/screen_reader false
 ```
 
 Para evitar que o terraform peça o nome do projeto a cada `apply`, podemos definir o nome do projeto por defeito:
@@ -115,19 +114,20 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 > **As alterações não disruptivas são pequenas alterações que possibilitam a re-configuração do recurso sem que este tenha que ser recriado, não afetando as suas dependências**
 
 * Editar o ficheiro `main.tf`, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
-* Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
+
+Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
 
 ```bash
 terraform plan -out plan.tfplan
 ```
 
-* Executar `terraform apply plan.tfplan`.
+Executar `terraform apply plan.tfplan`.
 
 ```bash
 terraform apply plan.tfplan
 ```
 
-* Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
+Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
 
 ```bash
 gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
@@ -144,13 +144,15 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 terraform plan -out plan.tfplan
 ```
 
-* Aplicar o `plan`, verificar e acompanhar observando na execução do terraform que irá acontecer um `destroy` seguido de um `create`:
+Aplicar o `plan`, verificar e acompanhar observando na execução do terraform que irá acontecer um `destroy` seguido de um `create`:
 
 ```bash
 terraform apply plan.tfplan
 ```
 
-* Verificar que o SSH continua a ser possível, mesmo com a nova instância:
+Verificar que o SSH continua a ser possível, mesmo com a nova instância:
+
+<sub>*o comando pode não funcionar logo...pode demorar até 1 minuto depois da VM ser criada.*</sub>
 
 ```bash
 gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output -raw project_id) --zone $(terraform output -raw vm_zone)
@@ -180,9 +182,9 @@ terraform apply plan.tfplan
 
 ## 3. importar recursos já existentes
 
-Nesta secção iremos abordar um comando particularmente útil: `terraform import`
+Disponível a partir do terraform `v1.5`. Toda a documentação deste capítulo está descrita [aqui](https://developer.hashicorp.com/terraform/tutorials/state/state-import).
 
-> *[from docs:](https://www.terraform.io/docs/cli/import/index.html)Terraform is able to import existing infrastructure. This allows you take resources you've created by some other means and bring it under Terraform management.*
+> *[from docs:](https://developer.hashicorp.com/terraform/tutorials/state/state-import)Terraform supports bringing your existing infrastructure under its management. By importing resources into Terraform, you can consistently manage your infrastructure using a common workflow.*
 >
 > *This is a great way to slowly transition infrastructure to Terraform, or to be able to be confident that you can use Terraform in the future if it potentially doesn't support every feature you need today.*
 
@@ -214,67 +216,69 @@ Criar uma subnet:
 gcloud compute networks subnets create $(terraform output -raw my_identifier)-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier)-vpc --region=$(terraform output -raw region)
 ```
 
-### 3.2 Importar os recursos para o terraform state
+### 3.2 Importar recursos existentes
 
-Agora iremos colocar em prática os comandos de `import` para passar a gerir os recursos pelo terraform.
+O processo de importação de recursos consiste em duas partes:
 
-Ir ao ficheiro `import-exercise.tf` e descomentar os blocos
+* obtenção da informação do recurso na cloud
+* criação de um bloco `import` que irá indicar ao terraform que o recurso já existe e que o mesmo deve ser gerido pelo terraform.
 
-* `resource "google_compute_network" "imported"`
-* `resource "google_compute_subnetwork" "imported"`
+---
 
-1. SE tentarem efectuar o `plan` e `apply` irá dar um erro pois o recurso já existe.
-2. Terá que ser importado para o state do terraform
+O primeiro passo da importação de recursos é [declarar a importação dos mesmos](https://developer.hashicorp.com/terraform/tutorials/state/state-import).
 
-Verificar que o terraform vai tentar criar os recursos porque ainda não estão importados:
+Para isto, [temos que definir o bloco `import`](https://developer.hashicorp.com/terraform/tutorials/state/state-import#define-import-block), que necessita de dois argumentos:
 
-Executar o `plan` seguido pelo `apply`:
+* `id`: o id do recurso a importar do lado do GCP
+* `to`: o identificador terraform do recurso a importar
+
+Exemplo de um bloco `import`:
+
+```hcl
+import {
+  id = "projects/tf-gke-lab-01-np-000001/global/networks/somevpc"
+  to = google_compute_network.somevpc
+}
+```
+
+Para o exercicio que segue, vamos ao ficheiro `import-exercise.tf` e descomentar os blocos `import { ... }`
+
+Antes de efetuar a importação precisamos de obter o `id` do recurso a importar do lado do GCP tal como descrito nas instruções de importação para o recurso [`google_compute_network`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network#import) e [`google_compute_subnetwork`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#import).
+
+Existem várias formas para obter o `id` dos recursos, neste exemplo usamos os comandos `gcloud`:
+
+Obter o `id` para a `google_compute_network`:
 
 ```bash
-terraform plan -out plan.tfplan
+gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)" | sed "s~https://www.googleapis.com/compute/v1/~~"
 ```
+
+Obter o `id` da  para a `google_compute_subnetwork`:
+
+```bash
+gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)" | sed "s~https://www.googleapis.com/compute/v1/~~"
+```
+
+Agora que temos o identificador dos recursos, temos que preencher o respetivo `id` no bloco `import`:
+
+* Substituir o `id` do recurso `google_compute_network` no bloco `import` do ficheiro `import-exercise.tf`
+* Substituir o `id` do recurso `google_compute_subnetwork` no bloco `import` do ficheiro `import-exercise.tf`
+
+---
+
+Vamos então correr o `plan`, mas vamos usar a opção `-generate-config-out` para gerar o código dos recursos que vão ser importados para o ficheiro `imported-resources.tf`:
+
+```bash
+terraform plan -out plan.tfplan -generate-config-out imported-resources.tf
+```
+
+Por fim, o `apply` para executar a operação planeada:
 
 ```bash
 terraform apply plan.tfplan
 ```
 
-**O que vai acontecer é que o GCP vai retornar um erro `4xx` indicando que estamos a tentar criar um recurso que já existe - é normal e esperado pois precisamos de proceder à importação.**
-
----
-
-Para proceder à importação, precisamos de obter o `self_link` do recurso a importar do lado do GCP tal como descrito nas instruções de importação para o recurso [`google_compute_network`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network#import) e [`google_compute_subnetwork`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#import).
-
-Se precisarem, podem obter o `uri` do recurso usando os seguinte comandos
-
-Obter o `uri` para a `google_compute_network`:
-
-```bash
-gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)"
-```
-
-Importar o recurso:
-
-```bash
-terraform import google_compute_network.imported projects/$(terraform output -raw project_id)/global/networks/$(terraform output -raw my_identifier)-vpc
-```
-
----
-
-Agora temos que fazer o mesmo para o recurso `google_compute_subnetwork`.
-
-Obter o `uri` para a `google_compute_subnetwork`:
-
-```bash
-gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)"
-```
-
-Importar o recurso:
-
-```bash
-terraform import google_compute_subnetwork.imported projects/$(terraform output -raw project_id)/regions/$(terraform output -raw region)/subnetworks/$(terraform output -raw my_identifier)-subnet
-```
-
-> Agora, se tentarmos agora fazer `plan`, vamos verificar que o terraform indica que não tem alterações à infraestrutura, confirmando que os recursos foram importados som sucesso.
+Agora, se tentarmos agora fazer `plan` novamente, vamos verificar que o terraform indica que não tem alterações à infraestrutura, confirmando que os recursos foram importados som sucesso.
 
 Testar o `plan`:
 
@@ -282,80 +286,32 @@ Testar o `plan`:
 terraform plan -out plan.tfplan
 ```
 
-### 3.3 Criar novos recursos dependentes dos recursos importados
+### 3.3 Limpar as declarações de importação
 
-Neste passo iremos criar novos recursos (mais uma Virtual Machine) que irão precisar dos recursos que foram previamente importados.
+Após uma operação de importação, é importante garantir o seguinte:
 
-* Descomentar os seguintes blocos no ficheiro `import-exercise.tf`
-  * `resource "google_compute_instance" "vm2"`
-  * `resource "google_compute_firewall" "imported_iap"`
+* Limpar as declarações de importação
+* Limpar/Reorganizar o código gerado pelo `plan -generate-config-out` para que o mesmo fique de acordo com as boas práticas de terraform.
 
-Executar o `plan` e `apply` e verificar que os novos recursos vão ser criados usando as dependências que foram importadas previamente:
+Limpar as declarações de importação que fizemos no ficheiro `import-exercise.tf`:
 
-Observar o `plan`:
+* Comentar ou eliminar os blocos `import { ... }` no ficheiro `import-exercise.tf`
+
+Declarar as depêndencias implicitas do recurso `google_compute_subnetwork.imported`, garantindo que este passa a ter uma dependência implicita do recurso `google_compute_network.imported`
+
+* Editar o ficheiro `imported-resources.tf`, e na linha `10` modificar a declaração para corresponder ao seguinte código:
+
+```hcl
+network = data.google_compute_network.imported.self_link
+```
+
+Por fim, podemos executar o `plan` e verificar terraform não tem alterações à infraestrutura.
 
 ```bash
 terraform plan -out plan.tfplan
 ```
 
-Observar o `apply`:
-
-```bash
-terraform apply plan.tfplan
-```
-
-> **Tip**: após a criação dos recursos, podem fazer SSH para a nova instância usando a *hint* dada pelo comando em output.
->
-> *Se o comando não funcionar à primeira, esperem 1 minuto e tentem novamente, pois a VM ainda pode estar a ser aprovisionada.*
-
-```bash
-terraform output vm2
-```
-
-## 4. Refactoring do código
-
-Disponível a partir do terraform `v1.1`. Mais informação [aqui](https://www.terraform.io/language/modules/develop/refactoring).
-
-O processo de refactoring do terraform é essencial quando pretendemos fazer alterações ao nosso código por forma a melhorar a legibilidade ou aplicar os principios DRY.
-
-Normalmente a operação mais usada vai ser a renomeação de modulos, no entanto, o principio é o mesmo para outro tipo de operações.
-
-> **Note**: Explicit refactoring declarations with moved blocks is available in Terraform v1.1 and later. For earlier Terraform versions or for refactoring actions too complex to express as moved blocks, you can use the `terraform state mv` CLI command as a separate step.
-
-### 4.1 Renomear um recurso já existente
-
-Ir ao ficheiro `import-exercise.tf`:
-
-* Na linha `17`, alterar o nome do recurso `resource "google_compute_firewall" "imported_iap"` para `imported_iap_moved`
-* Na linha `48`, alterar a referencia `google_compute_firewall.imported_iap` para `google_compute_firewall.imported_iap_moved`
-
-Verificar que o `terraform plan` quer destruir a `imported_iap` e criar a `imported_iap_moved`.
-
-```bash
-terraform plan -out plan.tfplan
-```
-
-Vamos então sinalizar o terraform que queremos mover o recurso do nome `imported_iap` para `imported_iap_moved`.
-
-* Descomentar os seguintes bloco `4.1` no ficheiro `move-exercise.tf`
-
-><sub>💡 Também é possível fazer o move usando o comando `terraform mv 'google_compute_firewall.imported_iap'  'google_compute_firewall.imported_iap_moved'` porém, este comando é avançado e requer algum cuidado na execução do mesmo. Por esse motivo, é recomendad a utilização do `moved` block.</sub>
-
-Verificar que o `terraform plan` indica que o recurso vai ser movido:
-
-```bash
-terraform plan -out plan.tfplan
-```
-
-Executar `terraform apply` para alterar o state:
-
-```bash
-terraform apply plan.tfplan
-```
-
-> 💡 Após o move ser aplicado, pode-se apagar o `moved` block.
-
-## 5. Exercício
+## 4. Exercício
 
 Neste exercicio o objectivo é aplicar alguns dos conhecimentos adquiridos nesta sessão sem que exista uma solução pronta para descomentarem 😉.
 
