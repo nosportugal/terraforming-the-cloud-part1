@@ -360,7 +360,7 @@ Prentende-se o seguinte:
 
 </details>
 
-## 6. wrap-up & destroy
+## 5. wrap-up & destroy
 
 Destruir os conteúdos!
 
