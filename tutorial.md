@@ -10,6 +10,7 @@
 * Os 4 principais comandos de terraform: `init`, `plan`, `apply` e `destroy`.
 * Gestão de alterações: **simples**, **disruptivas** e **dependentes**.
 * Importação de recursos existentes.
+* Exercicio final.
 
 **Tempo estimado**: Cerca de 2 horas
 
