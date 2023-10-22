@@ -53,6 +53,11 @@ terraform init
 terraform plan -out plan.tfplan
 ```
 
+💡Para evitar que o terraform peça o nome do projeto a cada `plan`, podemos definir o nome do projeto por defeito:
+
+* Abrir o ficheiro <walkthrough-editor-select-line filePath="terraform.tfvars" startLine="0" endLine="0" startCharacterOffset="0" endCharacterOffset="200">terraform.tfvars</walkthrough-editor-select-line>.
+* Descomentar a linha `project_id` e adicionar o id do projeto que aparece a amarelo na linha de comandos.
+
 ### Comando `apply`
 
 > *[from docs:](https://www.terraform.io/docs/cli/commands/apply.html) The `terraform apply` command executes the actions proposed in a Terraform plan.*
@@ -114,7 +119,7 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 > **As alterações não disruptivas são pequenas alterações que possibilitam a re-configuração do recurso sem que este tenha que ser recriado, não afetando as suas dependências**
 
-* Editar o ficheiro `main.tf`, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
+* Editar o ficheiro <walkthrough-editor-select-line filePath="main.tf" startLine="57" endLine="57" startCharacterOffset="0" endCharacterOffset="200">main.tf</walkthrough-editor-select-line>, localizar o recurso `google_compute_instance.default` e descomentar o campo `tags = [ "allow-iap" ]` na definição do recurso
 
 Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `update in-place` - isto é uma alteração simples.
 
@@ -138,7 +143,7 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 > **As alterações disruptivas são provocadas por alterações de propriedades que provocam a recriação do recurso e consequentes dependencias**
 
-* Localizar o recurso `google_compute_instance.default` e alterar o campo `name` para o seguinte: `"${random_pet.this.id}-vm-new"`
+* No ficheiro <walkthrough-editor-select-line filePath="main.tf" startLine="53" endLine="53" startCharacterOffset="0" endCharacterOffset="200">main.tf</walkthrough-editor-select-line>, localizar o recurso `google_compute_instance.default` e alterar o campo `name` para o seguinte: `"${random_pet.this.id}-vm-new"`
 * Executar `terraform plan -out plan.tfplan` e verificar que o Terraform irá efectuar um `replacement` - é uma alteração disruptiva.
 
 ```bash
@@ -163,7 +168,7 @@ gcloud compute ssh $(terraform output -raw vm_name) --project=$(terraform output
 
 > **As alterações também podem ser derivadas de dependêndencias, e quando isso acontece, todo o grafo de dependendencias é afetado.**
 
-* Editar o ficheiro `terraform.tfvars` e alterar o valor da variavel `prefix` de `gcp` para `new`
+* Editar o ficheiro <walkthrough-editor-select-line filePath="terraform.tfvars" startLine="1" endLine="1" startCharacterOffset="10" endCharacterOffset="13">terraform.tfvars</walkthrough-editor-select-line> e alterar o valor da variavel `prefix` de `gcp` para `new`
 
 Executar o `plan` e verificar todo o grafo de dependencias é afetado:
 
@@ -199,7 +204,7 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-### 3.1 Criar uma vpc e respetiva subnet usando os comandos gcloud
+### 3.1 Criar um recurso (`google_compute_network`) usando os comandos gcloud
 
 Nesta parte vamos criar recursos recorrendo a uma ferramenta externa ao terraform por forma a criar um use-case de recursos que existem fora do `state` do terraform.
 
@@ -209,12 +214,6 @@ Criar uma vpc:
 
 ```bash
 gcloud compute networks create $(terraform output -raw my_identifier)-vpc --project=$(terraform output -raw project_id) --subnet-mode=custom
-```
-
-Criar uma subnet:
-
-```bash
-gcloud compute networks subnets create $(terraform output -raw my_identifier)-subnet --project=$(terraform output -raw project_id) --range=10.0.0.0/9 --network=$(terraform output -raw my_identifier)-vpc --region=$(terraform output -raw region)
 ```
 
 ### 3.2 Importar recursos existentes
@@ -238,13 +237,13 @@ Exemplo de um bloco `import`:
 ```hcl
 import {
   id = "projects/tf-gke-lab-01-np-000001/global/networks/somevpc"
-  to = google_compute_network.somevpc
+  to = google_compute_network.imported
 }
 ```
 
-Para o exercicio que segue, vamos ao ficheiro `import-exercise.tf` e descomentar os blocos `import { ... }`
+Para o exercicio que segue, vamos ao ficheiro <walkthrough-editor-select-line filePath="import-exercise.tf" startLine="2" endLine="10" startCharacterOffset="0" endCharacterOffset="200">import-exercise.tf</walkthrough-editor-select-line> e descomentar os blocos `import { ... }`
 
-Antes de efetuar a importação precisamos de obter o `id` do recurso a importar do lado do GCP tal como descrito nas instruções de importação para o recurso [`google_compute_network`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network#import) e [`google_compute_subnetwork`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_subnetwork#import).
+Antes de efetuar a importação precisamos de obter o `id` do recurso a importar do lado do GCP tal como descrito nas instruções de importação para o recurso [`google_compute_network`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_network#import).
 
 Existem várias formas para obter o `id` dos recursos, neste exemplo usamos os comandos `gcloud`:
 
@@ -254,16 +253,9 @@ Obter o `id` para a `google_compute_network`:
 gcloud compute networks list --uri | grep "$(terraform output -raw my_identifier)" | sed "s~https://www.googleapis.com/compute/v1/~~"
 ```
 
-Obter o `id` da  para a `google_compute_subnetwork`:
-
-```bash
-gcloud compute networks subnets list --uri | grep "$(terraform output -raw my_identifier)" | sed "s~https://www.googleapis.com/compute/v1/~~"
-```
-
 Agora que temos o identificador dos recursos, temos que preencher o respetivo `id` no bloco `import`:
 
-* Substituir o `id` do recurso `google_compute_network` no bloco `import` do ficheiro `import-exercise.tf`
-* Substituir o `id` do recurso `google_compute_subnetwork` no bloco `import` do ficheiro `import-exercise.tf`
+* Substituir o `id` do recurso `google_compute_network` no bloco `import` do ficheiro <walkthrough-editor-select-line filePath="import-exercise.tf" startLine="3" endLine="3" startCharacterOffset="8" endCharacterOffset="14">import-exercise.tf</walkthrough-editor-select-line>
 
 ---
 
@@ -272,6 +264,8 @@ Vamos então correr o `plan`, mas vamos usar a opção `-generate-config-out` pa
 ```bash
 terraform plan -out plan.tfplan -generate-config-out imported-resources.tf
 ```
+
+Podemos inspeccionar os conteudos do ficheiro <walkthrough-editor-select-line filePath="imported-resources.tf" startLine="0" endLine="100" startCharacterOffset="0" endCharacterOffset="200">imported-resources.tf</walkthrough-editor-select-line>.
 
 Por fim, o `apply` para executar a operação planeada:
 
@@ -287,38 +281,13 @@ Testar o `plan`:
 terraform plan -out plan.tfplan
 ```
 
-### 3.3 Limpar as declarações de importação
-
-Após uma operação de importação, é importante garantir o seguinte:
-
-* Limpar as declarações de importação
-* Limpar/Reorganizar o código gerado pelo `plan -generate-config-out` para que o mesmo fique de acordo com as boas práticas de terraform.
-
-Limpar as declarações de importação que fizemos no ficheiro `import-exercise.tf`:
-
-* Comentar ou eliminar os blocos `import { ... }` no ficheiro `import-exercise.tf`
-
-Declarar as depêndencias implicitas do recurso `google_compute_subnetwork.imported`, garantindo que este passa a ter uma dependência implicita do recurso `google_compute_network.imported`
-
-* Editar o ficheiro `imported-resources.tf`, e na linha `10` modificar a declaração para corresponder ao seguinte código:
-
-```hcl
-network = data.google_compute_network.imported.self_link
-```
-
-Por fim, podemos executar o `plan` e verificar terraform não tem alterações à infraestrutura.
-
-```bash
-terraform plan -out plan.tfplan
-```
-
 ## 4. Exercício
 
 Neste exercicio o objectivo é aplicar alguns dos conhecimentos adquiridos nesta sessão sem que exista uma solução pronta para descomentarem 😉.
 
 Prentende-se o seguinte:
 
-* 👉 Devem fazer o exercicio no ficheiro `final-exercise.tf`.
+* 👉 Devem fazer o exercicio no ficheiro <walkthrough-editor-open-file filePath="final-exercise.tf">final-exercise.tf</walkthrough-editor-open-file>.
 * 👉 Criar uma Google Cloud Service Account com os seguintes requisitos:
   * `account_id` deverá ser prefixada com valor definido no recurso `random_pet.this.id` para evitar colisões de nomes
 * 👉 Criar uma Google Cloud Compute Instance com os seguintes requisitos:
@@ -330,33 +299,20 @@ Prentende-se o seguinte:
   * A máquina deverá correr com a `google_service_account` previamente criada.
 * 👉 Por fim, deverão testar o correto aprovisionamento fazendo `ssh` para a máquina que acabaram de criar.
 
-### Ajudas
+### Ajudas😵
 
-<details><summary>Abrir/scroll-down para ver ajudas</summary>
+💡 Usem a pesquisa no terraform registry / google para saberem mais informação acerca dos recursos que estão a usar:
 
->
->
->
->
->
->
->
->
->
->
->
->
->
->
->
-> 💡 Usem a pesquisa no terraform registry / google para saberem mais informação acerca dos recursos que estão a usar:
->
-> * [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account)
-> * [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)
->
-> 💡 Uma subnet já existente poderá ser `data.google_compute_subnetwork.default.self_link`
->
-> 💡 Caso não consigam fazer `ssh`, também podem consultar a descrição da VM recorrendo ao comando: `gcloud compute instances describe COMPUTE_INSTANCE_NAME --zone=COMPUTE_INSTANCE_ZONE`
+* [`google_service_account`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/google_service_account)
+* [`google_compute_instance`](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)
+
+💡 Uma subnet já existente poderá ser <walkthrough-editor-select-line filePath="main.tf" startLine="46" endLine="49" startCharacterOffset="0" endCharacterOffset="200">data.google_compute_subnetwork.default.self_link</walkthrough-editor-select-line>.
+
+💡 Caso não consigam fazer `ssh`, também podem consultar a descrição da VM recorrendo ao comando:
+
+```bash
+gcloud compute instances describe COMPUTE_INSTANCE_NAME --zone=COMPUTE_INSTANCE_ZONE
+```
 
 </details>
 
