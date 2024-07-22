@@ -66,7 +66,7 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-⏰ Tempo do médio do apply - 1 min.
+⏰ Tempo médio do apply - 1 min.
 
 verificar que o recurso remoto foi criado:
 
@@ -84,7 +84,7 @@ gcloud compute instances list
 terraform destroy
 ```
 
-⏰ Tempo do médio do destroy - 2 min.
+⏰ Tempo médio do destroy - 2 min.
 
 verificar que o recurso remoto foi destruido:
 
@@ -108,7 +108,7 @@ terraform plan -out plan.tfplan
 terraform apply plan.tfplan
 ```
 
-⏰ Tempo do médio do apply - 1 min.
+⏰ Tempo médio do apply - 1 min.
 
 ### Tentar entrar para a máquina via SSH
 
@@ -139,7 +139,7 @@ Executar `terraform apply plan.tfplan`.
 terraform apply plan.tfplan
 ```
 
-⏰ Tempo do médio do apply - 1 min.
+⏰ Tempo médio do apply - 1 min.
 
 Como adicionámos uma tag que permite indicar à firewall o acesso SSH por IAP, podemos então testar novo comando de SSH:
 
@@ -164,7 +164,7 @@ Aplicar o `plan`, verificar e acompanhar observando na execução do terraform q
 terraform apply plan.tfplan
 ```
 
-⏰ Tempo do médio do apply - 3 min.
+⏰ Tempo médio do apply - 3 min.
 
 Verificar que o SSH continua a ser possível, mesmo com a nova instância:
 
@@ -192,7 +192,7 @@ Executar o `apply`:
 terraform apply plan.tfplan
 ```
 
-⏰ Tempo do médio do apply - 3 min.
+⏰ Tempo médio do apply - 3 min.
 
 *Notem que apenas alterámos uma mera variável...*
 
