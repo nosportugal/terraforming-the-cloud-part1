@@ -279,7 +279,7 @@ Exemplo de um bloco `import`:
 
 ```hcl
 import {
-  id = "projects/ten21-terraforming-p-154457/global/networks/somevpc"
+  id = "projects/tto-workshops-lab-848993/global/networks/somevpc"
   to = google_compute_network.imported
 }
 ```
