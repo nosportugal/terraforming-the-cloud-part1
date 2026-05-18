@@ -2,8 +2,9 @@
 terraform {
   required_version = ">= 1.5.7"
   backend "gcs" {
-    bucket = "ten21-terraforming-p-154457-tf-state"
-    prefix = "tf-state"
+    bucket                      = "tto-workshops-lab-848993-terraform-state"
+    prefix                      = "tf-state"
+    impersonate_service_account = "terraform-sa-002@tto-workshops-lab-848993.iam.gserviceaccount.com"
   }
   required_providers {
     google = {
