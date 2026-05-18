@@ -29,7 +29,7 @@ locals {
 
 resource "google_project_iam_member" "this" {
   for_each = { for iam_member in local.iam_members_flattened : "${iam_member.role}|${iam_member.member}" => iam_member }
-  project  = data.google_project.this.name
+  project  = var.project_id
   role     = each.value.role
   member   = each.value.member
 
@@ -40,7 +40,7 @@ resource "google_project_iam_member" "this" {
 }
 
 resource "google_project_iam_member" "dns_admin_sa" {
-  project = data.google_project.this.name
+  project = var.project_id
   role    = "roles/dns.admin"
   member  = "serviceAccount:${google_service_account.dns_admin.email}"
 
@@ -51,8 +51,8 @@ resource "google_project_iam_member" "dns_admin_sa" {
   ]
 }
 
-resource "google_service_account_iam_member" "external_dns" {
-  service_account_id = google_service_account.dns_admin.name
-  role               = "roles/iam.workloadIdentityUser"
-  member             = "serviceAccount:${data.google_project.this.project_id}.svc.id.goog[external-dns/external-dns]"
-}
+# resource "google_service_account_iam_member" "external_dns" {
+#   service_account_id = google_service_account.dns_admin.name
+#   role               = "roles/iam.workloadIdentityUser"
+#   member             = "serviceAccount:${var.project_id}.svc.id.goog[external-dns/external-dns]"
+# }

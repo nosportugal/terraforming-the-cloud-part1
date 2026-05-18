@@ -1,7 +1,7 @@
 
 ## terraform & providers
 terraform {
-  required_version = "1.11.2"
+  required_version = ">= 1.5.7"
   backend "local" {
     path = "terraform.tfstate"
   }

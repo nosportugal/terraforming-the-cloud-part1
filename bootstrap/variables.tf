@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "The project id to bootstrap resources."
   type        = string
-  default     = "ten21-terraforming-p-154457"
+  default     = "tto-workshops-lab-848993"
 }
 
 variable "region" {
@@ -13,7 +13,7 @@ variable "region" {
 variable "gcp_trainer_group" {
   description = "The group of the trainers for IAM purposes."
   type        = string
-  default     = "gcp-terraform-workshop@tentwentyone.io"
+  default     = "tfworkshop01@nos.pt"
 }
 
 variable "master_zone_dns_name" {

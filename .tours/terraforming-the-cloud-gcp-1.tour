@@ -19,7 +19,7 @@
     },
     {
       "file": "tutorial.md",
-      "description": "Para definir o projecto faz o comando:\n>> gcloud config set project ten21-wshop01-p-154457 && gcloud config set accessibility/screen_reader false\n\nCertifica-te que estás no projecto correcto fazendo o comando:\n>> gcloud config get-value project\n\n\nSe quiseres ver todos os projectos a que tens acesso faz o comando:\n>> gcloud projects list",
+      "description": "Para definir o projecto faz o comando:\n>> gcloud config set project tto-workshops-lab-848993 && gcloud config set accessibility/screen_reader false\n\nCertifica-te que estás no projecto correcto fazendo o comando:\n>> gcloud config get-value project\n\n\nSe quiseres ver todos os projectos a que tens acesso faz o comando:\n>> gcloud projects list",
       "line": 7
     },
     {

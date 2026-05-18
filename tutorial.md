@@ -19,7 +19,7 @@
 Certifica-te que tens a `google-cloud-shell` devidamente autorizada correndo este comando:
 
 ```bash
-gcloud config set project ten21-wshop01-p-154457 && gcloud config set accessibility/screen_reader false
+gcloud config set project tto-workshops-lab-848993 && gcloud config set accessibility/screen_reader false
 ```
 
 Garante que tens a extensão da HashiCorp Terraform instalada:
