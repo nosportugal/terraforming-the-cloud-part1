@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   type        = string
   description = "The default region to use."
-  default     = "europe-southwest1"
+  default     = "europe-west1"
 }
 
 variable "prefix" {
